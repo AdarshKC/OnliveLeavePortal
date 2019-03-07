@@ -3,32 +3,54 @@ session_start();
 error_reporting(0);
 include('includes/config.php');
 if(strlen($_SESSION['alogin'])==0)
-    {   
-header('location:index.php');
-}
-else{
-if(isset($_POST['add']))
-{
-$leavetype=$_POST['leavetype'];
-$description=$_POST['description'];
-$sql="INSERT INTO tblleavetype(LeaveType,Description) VALUES(:leavetype,:description)";
-$query = $dbh->prepare($sql);
-$query->bindParam(':leavetype',$leavetype,PDO::PARAM_STR);
-$query->bindParam(':description',$description,PDO::PARAM_STR);
-$query->execute();
-$lastInsertId = $dbh->lastInsertId();
-if($lastInsertId)
-{
-$msg="Leave type added Successfully";
-}
-else 
-{
-$error="Something went wrong. Please try again";
-}
+{   
+    header('location:index.php');
+}else{
+    $error = "";
+    if(isset($_POST['add'])) {
 
-}
-
-    ?>
+    $leavetype=$_POST['leavetype'];
+    $total=$_POST['total'];
+    if ((int)$total>=365) {
+        $error = "Number of Leaves exceeded 365!!";
+    }
+    if($error=="") {
+        $description=$_POST['description'];
+        $accumulates = 0;
+        if(isset($_POST['accumulates'])) {
+            $accumulates=1;
+        }
+        $distributed = 0;
+        if(isset($_POST['distributed'])) {
+            $distributed=1;
+        }
+        $sql="INSERT INTO tblleavetype(LeaveType,Description,totl_avl_year,accumulates,distributed) VALUES(:leavetype,:description,:total,:accumulates,:distributed)";
+        $query = $dbh->prepare($sql);
+        $query->bindParam(':leavetype',$leavetype,PDO::PARAM_STR);
+        $query->bindParam(':description',$description,PDO::PARAM_STR);
+        $query->bindParam(':total',$total,PDO::PARAM_STR);
+        $query->bindParam(':accumulates',$accumulates,PDO::PARAM_INT);
+        $query->bindParam(':distributed',$distributed,PDO::PARAM_INT);
+        $duplicate = 0;
+        if(!$query->execute()) { 
+            $e = $query->errorInfo();
+            if ($e[1]==1062) {
+                $error= "Leave Type already exists!";
+            } else {
+                $error="Something went wrong. Please try again!!";        
+            }
+        } else { 
+            $lastInsertId = $dbh->lastInsertId();
+            if($lastInsertId)
+            {
+                $msg="Leave type added Successfully";
+            } else {
+                $error="Something went wrong. Please try again";
+            }
+        }
+    }
+    }
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -96,10 +118,21 @@ $error="Something went wrong. Please try again";
 <textarea id="textarea1" name="description" class="materialize-textarea" name="description" length="500"></textarea>
                                                 <label for="deptshortname">Description</label>
                                             </div>
- 
-
-
-
+                                            
+                                        <div class="input-field col s12">
+<input id="total" type="text"  class="validate" autocomplete="off" name="total"  required>
+                                                <label for="leavetype">Number of leaves per year(in days)</label>
+                                            </div>
+                                        
+                                        <div class="input-field col s12">
+<input id="accumulates" type="checkbox"  class="validate" name="accumulates">
+                                                <label for="accumulates">Does this leave accumulates over the years? </label>
+                                            </div>
+                                        <div class="input-field col s12">
+<input id="distributed" type="checkbox"  class="validate" name="distributed">
+                                                <label for="distributed">Does this leave distributed over the years? </label>
+                                            </div>
+                                            
 
 <div class="input-field col s12">
 <button type="submit" name="add" class="waves-effect waves-light btn indigo m-b-xs">ADD</button>
