@@ -77,6 +77,7 @@ class Leave
 		$query_holidays = $this->dbh->prepare($sql);
 		$query_holidays->bindParam(':from', $this->from, PDO::PARAM_STR);
 		$query_holidays->bindParam(':to', $this->to, PDO::PARAM_STR);
+		$query_holidays->execute();
 		return $query_holidays;
 	}
 

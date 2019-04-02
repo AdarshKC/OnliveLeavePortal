@@ -16,23 +16,30 @@ if(strlen($_SESSION['alogin'])==0)
     }
     if($error=="") {
         $description=$_POST['description'];
+        $restriction=$_POST['restriction'];
         $accumulates = 0;
         if(isset($_POST['accumulates'])) {
             $accumulates=1;
         }
-        $distributed = 0;
-        if(isset($_POST['distributed'])) {
-            $distributed=1;
+        $distributed=1;
+        if($_POST['distributed']=='Half-yearly'){
+            $distributed=2;
+            $total/=2;
+        }
+        if($_POST['distributed']=='Quarterly'){
+            $distributed=4;
+            $total/=4;
         }
         $include_weekends = 0;
-        if(isset($_POST['distributed'])) {
-            $distributed=2;
+        if(isset($_POST['include_weekends'])) {
+            $include_weekends=1;
         }
-        
-        $sql="INSERT INTO tblleavetype(LeaveType,Description,totl_avl_year,accumulates,distributed,include_weekends) VALUES(:leavetype,:description,:total,:accumulates,:distributed,:include_weekends)";
+
+        $sql="INSERT INTO tblleavetype(LeaveType,Description,Restriction,totl_avl_year,accumulates,distributed,include_weekends) VALUES(:leavetype,:description,:restriction,:total,:accumulates,:distributed,:include_weekends)";
         $query = $dbh->prepare($sql);
         $query->bindParam(':leavetype',$leavetype,PDO::PARAM_STR);
         $query->bindParam(':description',$description,PDO::PARAM_STR);
+        $query->bindParam(':restriction',$restriction,PDO::PARAM_STR);
         $query->bindParam(':total',$total,PDO::PARAM_STR);
         $query->bindParam(':accumulates',$accumulates,PDO::PARAM_INT);
         $query->bindParam(':distributed',$distributed,PDO::PARAM_INT);
@@ -120,23 +127,29 @@ if(strlen($_SESSION['alogin'])==0)
                                             </div>
 
 
-          <div class="input-field col s12">
-<textarea id="textarea1" name="description" class="materialize-textarea" name="description" length="500"></textarea>
+                                        <div class="input-field col s12">
+<textarea id="textarea1" class="materialize-textarea" name="description" length="500"></textarea>
                                                 <label for="deptshortname">Description</label>
                                             </div>
-                                            
+                                        <div class="input-field col s12">
+<textarea id="textarea1" class="materialize-textarea" name="restriction" length="500"></textarea>
+                                                <label for="deptshortname">Restriction</label>
+                                            </div>    
                                         <div class="input-field col s12">
 <input id="total" type="text"  class="validate" autocomplete="off" name="total"  required>
                                                 <label for="leavetype">Number of leaves per year(in days)</label>
                                             </div>
-                                        
+                                        <div class="input-field col s12">
+                                            <select id="distributed" name="distributed" required>
+                                                <option value="Quarterly">Quarterly</option>
+                                                <option value="Half-yearly">Half-yearly</option>
+                                                <option value="Yearly" selected>Yearly</option>
+                                            </select>
+                                            <label for="distributed">Select the way this leave is distributed.<br></label>
+                                        </div>
                                         <div class="input-field col s12">
 <input id="accumulates" type="checkbox"  class="validate" name="accumulates">
                                                 <label for="accumulates">Does this leave accumulates over the years? </label>
-                                            </div>
-                                        <div class="input-field col s12">
-<input id="distributed" type="checkbox"  class="validate" name="distributed">
-                                                <label for="distributed">Does this leave distributed over the years? </label>
                                             </div>
                                             <div class="input-field col s12">
 <input id="include_weekends" type="checkbox"  class="validate" name="include_weekends">

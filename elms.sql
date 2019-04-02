@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 06, 2019 at 10:41 AM
+-- Generation Time: Apr 02, 2019 at 04:39 AM
 -- Server version: 10.1.38-MariaDB
 -- PHP Version: 7.3.2
 
@@ -92,6 +92,7 @@ CREATE TABLE `leave_left` (
   `leave_id` int(11) NOT NULL,
   `taken` int(11) NOT NULL,
   `left_days` int(11) NOT NULL,
+  `unique_id` int(60) NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -253,7 +254,8 @@ ALTER TABLE `leave_comb`
 -- Indexes for table `leave_left`
 --
 ALTER TABLE `leave_left`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_id` (`unique_id`);
 
 --
 -- Indexes for table `list_holidays`
