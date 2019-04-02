@@ -1,7 +1,7 @@
 <?php
 session_start();
 error_reporting(0);
-include('includes/config.php');
+include('../includes/config.php');
 if(strlen($_SESSION['alogin'])==0)
     {   
 header('location:index.php');
@@ -69,9 +69,9 @@ $error="Something went wrong. Please try again";
         </style>
     </head>
     <body>
-  <?php include('includes/header.php');?>
+  <?php include('../includes/header.php');?>
             
-       <?php include('includes/sidebar.php');?>
+       <?php include('sidebar.php');?>
             <main class="mn-inner">
                 <div class="row">
                     <div class="col s12">

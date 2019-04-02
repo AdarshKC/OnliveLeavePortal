@@ -2,7 +2,7 @@
 <?php
 session_start();
 error_reporting(0);
-include('includes/config.php');
+include('../includes/config.php');
 // Code for change password 
 if(isset($_POST['change']))
     {
@@ -31,14 +31,14 @@ $msg="Your Password succesfully changed";
         <meta name="author" content="Steelcoders" />
         
         <!-- Styles -->
-        <link type="text/css" rel="stylesheet" href="assets/plugins/materialize/css/materialize.min.css"/>
+        <link type="text/css" rel="stylesheet" href="../assets/plugins/materialize/css/materialize.min.css"/>
         <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-        <link href="assets/plugins/material-preloader/css/materialPreloader.min.css" rel="stylesheet">        
+        <link href="../assets/plugins/material-preloader/css/materialPreloader.min.css" rel="stylesheet">        
 
         	
         <!-- Theme Styles -->
-        <link href="assets/css/alpha.min.css" rel="stylesheet" type="text/css"/>
-        <link href="assets/css/custom.css" rel="stylesheet" type="text/css"/>
+        <link href="../assets/css/alpha.min.css" rel="stylesheet" type="text/css"/>
+        <link href="../assets/css/custom.css" rel="stylesheet" type="text/css"/>
   <style>
         .errorWrap {
     padding: 10px;
@@ -227,11 +227,11 @@ foreach ($results as $result) {
         <div class="left-sidebar-hover"></div>
         
         <!-- Javascripts -->
-        <script src="assets/plugins/jquery/jquery-2.2.0.min.js"></script>
-        <script src="assets/plugins/materialize/js/materialize.min.js"></script>
-        <script src="assets/plugins/material-preloader/js/materialPreloader.min.js"></script>
-        <script src="assets/plugins/jquery-blockui/jquery.blockui.js"></script>
-        <script src="assets/js/alpha.min.js"></script>
+        <script src="../assets/plugins/jquery/jquery-2.2.0.min.js"></script>
+        <script src="../assets/plugins/materialize/js/materialize.min.js"></script>
+        <script src="../assets/plugins/material-preloader/js/materialPreloader.min.js"></script>
+        <script src="../assets/plugins/jquery-blockui/jquery.blockui.js"></script>
+        <script src="../assets/js/alpha.min.js"></script>
         
     </body>
 </html>

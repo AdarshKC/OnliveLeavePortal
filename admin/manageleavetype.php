@@ -1,7 +1,7 @@
 <?php
 session_start();
 error_reporting(0);
-include('includes/config.php');
+include('../includes/config.php');
 if(strlen($_SESSION['alogin'])==0)
     {   
 header('location:index.php');
@@ -61,9 +61,9 @@ $msg="Leave type record deleted";
         </style>
     </head>
     <body>
-       <?php include('includes/header.php');?>
+       <?php include('header.php');?>
             
-       <?php include('includes/sidebar.php');?>
+       <?php include('sidebar.php');?>
             <main class="mn-inner">
                 <div class="row">
                     <div class="col s12">
@@ -80,6 +80,10 @@ $msg="Leave type record deleted";
                                         <tr>
                                             <th>Sr no</th>
                                             <th>Leave Type</th>
+                                            <th>Total per year</th>
+                                            <th>Accumulation</th>
+                                            <th>Distributed in Two halves</th>
+                                            <th>Includes Weekends</th>
                                             <th>Description</th>
                                             <th>Creation Date</th>
                                             <th>Action</th>
@@ -87,7 +91,8 @@ $msg="Leave type record deleted";
                                     </thead>
                                  
                                     <tbody>
-<?php $sql = "SELECT * from tblleavetype";
+<?php 
+$sql = "SELECT * from tblleavetype";
 $query = $dbh -> prepare($sql);
 $query->execute();
 $results=$query->fetchAll(PDO::FETCH_OBJ);
@@ -99,6 +104,10 @@ foreach($results as $result)
                                         <tr>
                                             <td> <?php echo htmlentities($cnt);?></td>
                                             <td><?php echo htmlentities($result->LeaveType);?></td>
+                                            <td><?php echo htmlentities($result->totl_avl_year);?></td>
+                                            <td><?php echo htmlentities($result->distributed==0?"No":"Yes");?></td>
+                                            <td><?php echo htmlentities($result->accumulates==0?"No":"Yes");?></td>
+                                            <td><?php echo htmlentities($result->include_weekends==0?"No":"Yes");?></td>
                                             <td><?php echo htmlentities($result->Description);?></td>
                                             <td><?php echo htmlentities($result->CreationDate);?></td>
                                             <td><a href="editleavetype.php?lid=<?php echo htmlentities($result->id);?>"><i class="material-icons">mode_edit</i></a>

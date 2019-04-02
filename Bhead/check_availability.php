@@ -1,5 +1,5 @@
 <?php 
-require_once("includes/config.php");
+require_once("../includes/config.php");
 // code for empid availablity
 if(!empty($_POST["empcode"])) {
 	$empid=$_POST["empcode"];

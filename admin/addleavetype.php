@@ -1,7 +1,7 @@
 <?php
 session_start();
 error_reporting(0);
-include('includes/config.php');
+include('../includes/config.php');
 if(strlen($_SESSION['alogin'])==0)
 {   
     header('location:index.php');
@@ -24,13 +24,19 @@ if(strlen($_SESSION['alogin'])==0)
         if(isset($_POST['distributed'])) {
             $distributed=1;
         }
-        $sql="INSERT INTO tblleavetype(LeaveType,Description,totl_avl_year,accumulates,distributed) VALUES(:leavetype,:description,:total,:accumulates,:distributed)";
+        $include_weekends = 0;
+        if(isset($_POST['distributed'])) {
+            $distributed=2;
+        }
+        
+        $sql="INSERT INTO tblleavetype(LeaveType,Description,totl_avl_year,accumulates,distributed,include_weekends) VALUES(:leavetype,:description,:total,:accumulates,:distributed,:include_weekends)";
         $query = $dbh->prepare($sql);
         $query->bindParam(':leavetype',$leavetype,PDO::PARAM_STR);
         $query->bindParam(':description',$description,PDO::PARAM_STR);
         $query->bindParam(':total',$total,PDO::PARAM_STR);
         $query->bindParam(':accumulates',$accumulates,PDO::PARAM_INT);
         $query->bindParam(':distributed',$distributed,PDO::PARAM_INT);
+        $query->bindParam(':include_weekends',$include_weekends,PDO::PARAM_INT);
         $duplicate = 0;
         if(!$query->execute()) { 
             $e = $query->errorInfo();
@@ -91,9 +97,9 @@ if(strlen($_SESSION['alogin'])==0)
         </style>
     </head>
     <body>
-  <?php include('includes/header.php');?>
+  <?php include('header.php');?>
             
-       <?php include('includes/sidebar.php');?>
+       <?php include('sidebar.php');?>
             <main class="mn-inner">
                 <div class="row">
                     <div class="col s12">
@@ -132,9 +138,12 @@ if(strlen($_SESSION['alogin'])==0)
 <input id="distributed" type="checkbox"  class="validate" name="distributed">
                                                 <label for="distributed">Does this leave distributed over the years? </label>
                                             </div>
-                                            
+                                            <div class="input-field col s12">
+<input id="include_weekends" type="checkbox"  class="validate" name="include_weekends">
+                                                <label for="include_weekends">Does this leave include weekends into Leave days? </label>
+                                            </div>
 
-<div class="input-field col s12">
+<div class="input-field col s12 addbutton">
 <button type="submit" name="add" class="waves-effect waves-light btn indigo m-b-xs">ADD</button>
 
 </div>

@@ -1,9 +1,9 @@
 <?php
 session_start();
 error_reporting(0);
-include('admin/includes/config.php');
+include('includes/config.php');
 if(strlen($_SESSION['alogin'])==0)
-    {   
+{   
 header('location:index.php');
 }
 else{
@@ -34,86 +34,10 @@ else{
         <!-- Theme Styles -->
         <link href="assets/css/alpha.min.css" rel="stylesheet" type="text/css"/>
         <link href="assets/css/custom.css" rel="stylesheet" type="text/css"/>
+        <link href="assets/css/onleave.css" rel="stylesheet" type="text/css"/>
 <style>
 
-.modal {
-  display: none; 
-  position: fixed; 
-  z-index: 1; 
-  padding-top: 100px; 
-  left: 0;
-  top: 0;
-  width: 100%; 
-  height: 100%; 
-  overflow: auto; 
-  background-color: rgb(0,0,0); 
-  background-color: rgba(0,0,0,0.4);
-}
 
-.modal-content {
-  position: relative;
-  background-color: #fefefe;
-  margin: auto;
-  padding: 0;
-  border: 1px solid #888;
-  width: 80%;
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-  -webkit-animation-name: animatetop;
-  -webkit-animation-duration: 0.4s;
-  animation-name: animatetop;
-  animation-duration: 0.4s
-}
-
-@-webkit-keyframes animatetop {
-  from {top:-300px; opacity:0} 
-  to {top:0; opacity:1}
-}
-
-@keyframes animatetop {
-  from {top:-300px; opacity:0}
-  to {top:0; opacity:1}
-}
-
-.close {
-  color: white;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-  color: #000;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.modal-header {
-  padding: 2px 16px;
-  background-color: #000;
-  color: white;
-}
-
-.modal-body {padding: 2px 16px;}
-
-
-
-        .errorWrap {
-    padding: 10px;
-    margin: 0 0 20px 0;
-    background: #fff;
-    border-left: 4px solid #dd3d36;
-    -webkit-box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
-    box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
-}
-.succWrap{
-    padding: 10px;
-    margin: 0 0 20px 0;
-    background: #fff;
-    border-left: 4px solid #5cb85c;
-    -webkit-box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
-    box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
-}
         </style>
     </head>
     <body>
@@ -131,25 +55,25 @@ else{
                                 <table id="example" class="display responsive-table ">
                                     <thead>
                                         <tr>
-                                            <th>#</th>
-                                            <th width="150">Employe Name</th>
+                                            <th width="50">#</th>
+                                            <th width="200">Employe Name</th>
                                             <th width="150">Employe ID</th>
                                             <th width="150">Department</th>
-                                            <th width="180">Leave Type</th>
+                                            <th width="200">Leave Type</th>
                                             <th width="150">From Date</th>                 
                                             <th width="150">To Date</th>                 
-                                            <th width="180">Description</th>                 
+                                            <th width="300">Description</th>                 
                                             
                                         </tr>
                                     </thead>
                                  
                                     <tbody>
 <?php 
-$today = date("d/m/Y");
+$today = (string)date("Y-m-d");
 $status=1;
-$sql = "SELECT tblleaves.id as lid,tblleaves.Description,tblemployees.Department,tblemployees.FirstName,tblemployees.LastName,tblemployees.EmpId,tblemployees.id,tblleaves.LeaveType,tblleaves.FromDate,tblleaves.ToDate,tblleaves.Status from tblleaves join tblemployees on tblleaves.empid=tblemployees.id where tblleaves.Status=:status order by lid desc";
+$sql = "SELECT tblleaves.id,tblleaves.Description,tblemployees.Department as dept,tblemployees.FirstName,tblemployees.LastName,tblemployees.EmpId,tblemployees.id,tblleaves.LeaveType,tblleaves.FromDate,tblleaves.ToDate,tblleaves.Status from tblleaves join tblemployees on tblleaves.empid=tblemployees.id where tblleaves.Status=1 AND tblleaves.FromDate<=:date AND tblleaves.ToDate>=:date order by dept desc";
 $query = $dbh -> prepare($sql);
-$query->bindParam(':status',$status,PDO::PARAM_STR);
+$query->bindParam(':date',$today,PDO::PARAM_STR);
 $query->execute();
 $results=$query->fetchAll(PDO::FETCH_OBJ);
 $cnt=1;
@@ -213,13 +137,15 @@ foreach($results as $result)
 
             function closemodal(i){
                 var modal = document.getElementById('myModal'+i);
-                modal.style.display = "none";                                
+                $("#myModal"+i).fadeOut();
+                //modal.style.display = "none";                                
             }
 
             window.onclick = function(event) {
                 for (var i = 0; i < modal.length; i++) {
                     if(event.target==modal[i]) {
-                        modal[i].style.display = "none";
+                        $("#myModal"+(i+1)).fadeOut();
+                        //modal[i].style.display = "none";
                     }
                 }
             }

@@ -1,9 +1,10 @@
 <?php
 session_start();
 error_reporting(0);
-include('includes/config.php');
+include_once('../includes/config.php');
+include_once('../util/leave.php');
 if(strlen($_SESSION['emplogin'])==0)
-    {   
+{   
 header('location:index.php');
 }
 else{
@@ -13,16 +14,20 @@ $empid=$_SESSION['eid'];
 $leavetype=$_POST['leavetype'];
 $fromdate=$_POST['fromdate'];  
 $todate=$_POST['todate'];
-$description=$_POST['description'];  
+$description=$_POST['description'];
+$date1=date_create($fromdate);
+$date2=date_create($todate);
+$count=(int)(date_diff($date1,$date2)->format("%a"))+1;
 $status=0;
 $isread=0;
     
 if($fromdate > $todate){
-        $error=" ToDate should be greater than FromDate ";
+        $error=" To Date should be greater than From Date ";
     }
-$sql="INSERT INTO tblleaves(LeaveType,ToDate,FromDate,Description,Status,IsRead,empid) VALUES(:leavetype,:fromdate,:todate,:description,:status,:isread,:empid)";
+$sql="INSERT INTO tblleaves(LeaveType,count,cur_year,ToDate,FromDate,Description,Status,IsRead,empid) VALUES(:leavetype,:count,YEAR(NOW()),:fromdate,:todate,:description,:status,:isread,:empid)";
 $query = $dbh->prepare($sql);
 $query->bindParam(':leavetype',$leavetype,PDO::PARAM_STR);
+$query->bindParam(':count',$count,PDO::PARAM_INT);
 $query->bindParam(':fromdate',$fromdate,PDO::PARAM_STR);
 $query->bindParam(':todate',$todate,PDO::PARAM_STR);
 $query->bindParam(':description',$description,PDO::PARAM_STR);
@@ -56,11 +61,11 @@ $error="Something went wrong. Please try again";
         <meta name="author" content="Steelcoders" />
         
         <!-- Styles -->
-        <link type="text/css" rel="stylesheet" href="assets/plugins/materialize/css/materialize.min.css"/>
+        <link type="text/css" rel="stylesheet" href="../assets/plugins/materialize/css/materialize.min.css"/>
         <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-        <link href="assets/plugins/material-preloader/css/materialPreloader.min.css" rel="stylesheet"> 
-        <link href="assets/css/alpha.min.css" rel="stylesheet" type="text/css"/>
-        <link href="assets/css/custom.css" rel="stylesheet" type="text/css"/>
+        <link href="../assets/plugins/material-preloader/css/materialPreloader.min.css" rel="stylesheet"> 
+        <link href="../assets/css/alpha.min.css" rel="stylesheet" type="text/css"/>
+        <link href="../assets/css/custom.css" rel="stylesheet" type="text/css"/>
   <style>
         .errorWrap {
     padding: 10px;
@@ -82,10 +87,72 @@ $error="Something went wrong. Please try again";
 
     </head>
     <body>
-  <?php include('includes/header.php');?>
+  <?php include('../includes/header.php');?>
             
-       <?php include('includes/sidebar.php');?>
+       <?php include('sidebar.php');?>
    <main class="mn-inner">
+        <div class="middle-content">
+                    <div class="row no-m-t no-m-b">
+                    <div class="col s12 m12 l4">
+                        <div class="card stats-card">
+                            <div class="card-content">
+                            
+                                <span class="card-title">Working Days Left(<?php echo date('Y'); ?>)</span>
+                                <span class="stats-counter">
+<?php
+//$Days = new Leave($dbh, (string)date('Y-m-d'), (string)date('Y-12-31'), 0);
+//$working_days_left = $Days->WorkingDays_left();
+$working_days_left = 122;
+?>
+
+                                    <span class="counter"><?php echo htmlentities($working_days_left);?></span></span>
+                            </div>
+                            <div id="sparkline-bar"></div>
+                        </div>
+                    </div>
+                        <div class="col s12 m12 l4">
+                        <div class="card stats-card">
+                            <div class="card-content">
+                            
+                                <span class="card-title">Leaves Taken(<?php echo date('Y'); ?>) </span>
+    <?php
+$sql = "SELECT SUM(count) AS sum from tblleaves WHERE empid=:eid AND status=1";
+$query = $dbh -> prepare($sql);
+$query->bindParam(':eid',$_SESSION['eid'],PDO::PARAM_INT);
+$query->execute();
+$results=$query->fetchAll(PDO::FETCH_OBJ);
+foreach ($results as $result) {
+    $dptcount=$result->sum;
+}
+?>                            
+                                <span class="stats-counter"><span class="counter"><?php echo htmlentities($dptcount);?></span></span>
+                            </div>
+                            <div id="sparkline-line"></div>
+                        </div>
+                    </div>
+                    <div class="col s12 m12 l4">
+                        <div class="card stats-card">
+                            <div class="card-content">
+                                <span class="card-title">Leaves Left(<?php echo date('Y'); ?>)</span>
+                                    <?php
+$sql = "SELECT SUM(totl_avl_year) AS sum from tblleavetype";
+$query = $dbh -> prepare($sql);
+$query->execute();
+$results=$query->fetchAll(PDO::FETCH_OBJ);
+foreach ($results as $result) {
+    $leavtypcount=$result->sum;
+}
+?>   
+                                <span class="stats-counter"><span class="counter"><?php echo htmlentities($leavtypcount-$dptcount);?></span></span>
+                      
+                            </div>
+                            <div class="progress stats-card-progress">
+                                <div class="determinate" style="width: 70%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="row">
                     <div class="col s12">
                         <div class="page-title">Apply for Leave</div>
@@ -123,12 +190,12 @@ foreach($results as $result)
 </div>
 
 <div class="input-field col m6 s12">
-<label for="fromdate">From  Date</label>
-<input placeholder="" id="mask1" name="fromdate" class="masked" type="text" data-inputmask="'alias': 'date'" required>
+<div for="fromdate">From  Date</div>
+<input placeholder="" name="fromdate" type="date" required>
 </div>
 <div class="input-field col m6 s12">
-<label for="todate">To Date</label>
-<input placeholder="" id="mask1" name="todate" class="masked" type="text" data-inputmask="'alias': 'date'" required>
+<div for="todate">To Date</div>
+<input placeholder="." name="todate" type="date" required>
 </div>
 <div class="input-field col m12 s12">
 <label for="birthdate">Description</label>
@@ -152,14 +219,14 @@ foreach($results as $result)
         </div>
         <div class="left-sidebar-hover"></div>
         <!-- Javascripts -->
-        <script src="assets/plugins/jquery/jquery-2.2.0.min.js"></script>
-        <script src="assets/plugins/materialize/js/materialize.min.js"></script>
-        <script src="assets/plugins/material-preloader/js/materialPreloader.min.js"></script>
-        <script src="assets/plugins/jquery-blockui/jquery.blockui.js"></script>
-        <script src="assets/js/alpha.min.js"></script>
-        <script src="assets/js/pages/form_elements.js"></script>
-        <script src="assets/js/pages/form-input-mask.js"></script>
-        <script src="assets/plugins/jquery-inputmask/jquery.inputmask.bundle.js"></script>
+        <script src="../assets/plugins/jquery/jquery-2.2.0.min.js"></script>
+        <script src="../assets/plugins/materialize/js/materialize.min.js"></script>
+        <script src="../assets/plugins/material-preloader/js/materialPreloader.min.js"></script>
+        <script src="../assets/plugins/jquery-blockui/jquery.blockui.js"></script>
+        <script src="../assets/js/alpha.min.js"></script>
+        <script src="../assets/js/pages/form_elements.js"></script>
+        <script src="../assets/js/pages/form-input-mask.js"></script>
+        <script src="../assets/plugins/jquery-inputmask/jquery.inputmask.bundle.js"></script>
     </body>
 </html>
 <?php } ?>

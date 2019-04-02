@@ -1,8 +1,11 @@
 
 <?php
 session_start();
+if (isset($_SESSION['emplogin'])) {
+  header("location:leavehistory.php");
+}
 error_reporting(0);
-include('includes/config.php');
+include('../includes/config.php');
 if(isset($_POST['signin']))
 {
 $uname=$_POST['username'];
@@ -24,7 +27,7 @@ if($status==0)
 $msg="Your account is Inactive. Please contact admin";
 } else{
 $_SESSION['emplogin']=$_POST['username'];
-echo "<script type='text/javascript'> document.location = 'emp-changepassword.php'; </script>";
+echo "<script type='text/javascript'> document.location = 'leavehistory.php'; </script>";
 } }
 
 else{
@@ -49,14 +52,14 @@ else{
         <meta name="author" content="Steelcoders" />
 
         <!-- Styles -->
-        <link type="text/css" rel="stylesheet" href="assets/plugins/materialize/css/materialize.min.css"/>
+        <link type="text/css" rel="stylesheet" href="../assets/plugins/materialize/css/materialize.min.css"/>
         <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-        <link href="assets/plugins/material-preloader/css/materialPreloader.min.css" rel="stylesheet">
+        <link href="../assets/plugins/material-preloader/css/materialPreloader.min.css" rel="stylesheet">
 
 
         <!-- Theme Styles -->
-        <link href="assets/css/alpha.min.css" rel="stylesheet" type="text/css"/>
-        <link href="assets/css/custom.css" rel="stylesheet" type="text/css"/>
+        <link href="../assets/css/alpha.min.css" rel="stylesheet" type="text/css"/>
+        <link href="../assets/css/custom.css" rel="stylesheet" type="text/css"/>
 
 
         <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -184,11 +187,11 @@ else{
         <div class="left-sidebar-hover"></div>
 
         <!-- Javascripts -->
-        <script src="assets/plugins/jquery/jquery-2.2.0.min.js"></script>
-        <script src="assets/plugins/materialize/js/materialize.min.js"></script>
-        <script src="assets/plugins/material-preloader/js/materialPreloader.min.js"></script>
-        <script src="assets/plugins/jquery-blockui/jquery.blockui.js"></script>
-        <script src="assets/js/alpha.min.js"></script>
+        <script src="../assets/plugins/jquery/jquery-2.2.0.min.js"></script>
+        <script src="../assets/plugins/materialize/js/materialize.min.js"></script>
+        <script src="../assets/plugins/material-preloader/js/materialPreloader.min.js"></script>
+        <script src="../assets/plugins/jquery-blockui/jquery.blockui.js"></script>
+        <script src="../assets/js/alpha.min.js"></script>
 
     </body>
 </html>

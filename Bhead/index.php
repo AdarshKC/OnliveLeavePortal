@@ -1,6 +1,9 @@
 <?php
 session_start();
-include('includes/config.php');
+if (isset($_SESSION['alogin'])) {
+  header("location:dashboard.php");
+}
+include('../includes/config.php');
 if(isset($_POST['signin']))
 {
 $uname=$_POST['username'];

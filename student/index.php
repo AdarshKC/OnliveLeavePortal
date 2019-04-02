@@ -1,8 +1,11 @@
 
 <?php
 session_start();
+if (isset($_SESSION['emplogin'])) {
+  header("location:leavehistory.php");
+}
 error_reporting(0);
-include('includes/config.php');
+include('../includes/config.php');
 if(isset($_POST['signin']))
 {
 $uname=$_POST['username'];
@@ -24,7 +27,7 @@ if($status==0)
 $msg="Your account is Inactive. Please contact admin";
 } else{
 $_SESSION['emplogin']=$_POST['username'];
-echo "<script type='text/javascript'> document.location = 'emp-changepassword.php'; </script>";
+echo "<script type='text/javascript'> document.location = 'leavehistory.php'; </script>";
 } }
 
 else{

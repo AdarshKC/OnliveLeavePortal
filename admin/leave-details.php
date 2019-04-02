@@ -1,7 +1,7 @@
 <?php
 session_start();
 error_reporting(0);
-include('includes/config.php');
+include('../includes/config.php');
 if(strlen($_SESSION['alogin'])==0)
     {   
 header('location:index.php');
@@ -20,11 +20,18 @@ $query->bindParam(':did',$did,PDO::PARAM_STR);
 $query->execute();
 
 // code for action taken on leave
-if(isset($_POST['update']))
+if(isset($_POST['update1']) || isset($_POST['update2']))
 { 
 $did=intval($_GET['leaveid']);
 $description=$_POST['description'];
-$status=$_POST['status'];   
+if ($description==null || $description=="") {
+  $description = "-";
+}
+if (isset($_POST['update1'])) {
+  $status=1;
+} else {
+  $status=2;
+}   
 date_default_timezone_set('Asia/Kolkata');
 $admremarkdate=date('Y-m-d G:i:s ', strtotime("now"));
 $sql="update tblleaves set AdminRemark=:description,Status=:status,AdminRemarkDate=:admremarkdate where id=:did";
@@ -83,9 +90,9 @@ $msg="Leave updated Successfully";
         </style>
     </head>
     <body>
-       <?php include('includes/header.php');?>
+       <?php include('header.php');?>
             
-       <?php include('includes/sidebar.php');?>
+       <?php include('sidebar.php');?>
             <main class="mn-inner">
                 <div class="row">
                     <div class="col s12">
@@ -193,9 +200,16 @@ if($stats==0)
 ?>
 <tr>
  <td colspan="5">
-  <a class="modal-trigger waves-effect waves-light btn" href="#modal1">Take&nbsp;Action</a>
 <form name="adminaction" method="post">
-<div id="modal1" class="modal modal-fixed-footer" style="height: 60%">
+  <p><textarea id="textarea1" name="description" class="materialize-textarea" name="description" placeholder="Remark if any" length="500" maxlength="500"></textarea></p>
+  </td>
+</tr>
+<tr>
+  <td colspan="5">
+  <input type="submit" class="waves-effect waves-light btn" name="update1" value="APPROVED">
+  <input type="submit" class="waves-effect waves-light btn" name="update2" value="NOT&nbsp;APPROVED"><br>
+</form>
+<!-- <div id="modal1" class="modal modal-fixed-footer" style="height: 60%">
     <div class="modal-content" style="width:90%">
         <h4>Leave take action</h4>
           <select class="browser-default" name="status" required="">
@@ -209,7 +223,7 @@ if($stats==0)
        <input type="submit" class="waves-effect waves-light btn blue m-b-xs" name="update" value="Submit">
     </div>
 
-</div>   
+</div>    -->
 
  </td>
 </tr>

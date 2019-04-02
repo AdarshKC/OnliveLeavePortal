@@ -2,7 +2,7 @@
 <?php
 session_start();
 error_reporting(0);
-include('includes/config.php');
+include('../includes/config.php');
 // Code for change password 
 if(isset($_POST['change']))
     {

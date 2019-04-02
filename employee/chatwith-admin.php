@@ -1,7 +1,7 @@
 <?php
 session_start();
 error_reporting(0);
-include('includes/config.php');
+include('../includes/config.php');
 if(strlen($_SESSION['emplogin'])==0)
     {   
 header('location:index.php');
@@ -23,15 +23,15 @@ else{
         <meta name="author" content="Steelcoders" />
         
         <!-- Styles -->
-        <link type="text/css" rel="stylesheet" href="assets/plugins/materialize/css/materialize.min.css"/>
+        <link type="text/css" rel="stylesheet" href="../assets/plugins/materialize/css/materialize.min.css"/>
         <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-        <link href="assets/plugins/material-preloader/css/materialPreloader.min.css" rel="stylesheet">
-        <link href="assets/plugins/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
+        <link href="../assets/plugins/material-preloader/css/materialPreloader.min.css" rel="stylesheet">
+        <link href="../assets/plugins/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
 
             
         <!-- Theme Styles -->
-        <link href="assets/css/alpha.min.css" rel="stylesheet" type="text/css"/>
-        <link href="assets/css/custom.css" rel="stylesheet" type="text/css"/>
+        <link href="../assets/css/alpha.min.css" rel="stylesheet" type="text/css"/>
+        <link href="../assets/css/custom.css" rel="stylesheet" type="text/css"/>
 <style>
         .errorWrap {
     padding: 10px;
@@ -52,9 +52,9 @@ else{
         </style>
     </head>
     <body>
-       <?php include('includes/header.php');?>
+       <?php include('../includes/header.php');?>
             
-       <?php include('includes/sidebar.php');?>
+       <?php include('sidebar.php');?>
             <main class="mn-inner">
                 <div class="row">
                     <div class="col s12">
@@ -87,7 +87,7 @@ foreach($results as $result)
                         <div class="text-wrapper"><?php echo htmlentities($result->chat);?></div>
                     </div>
                     <div class="message-wrapper me">
-                        <div class="circle-wrapper"><img src="assets/images/profile-image-3.jpg" class="circle" alt=""></div>
+                        <div class="circle-wrapper"><img src="../assets/images/profile-image-3.jpg" class="circle" alt=""></div>
                         <div class="text-wrapper"><?php $st=$result->admin;
                        // if($st==1){
 
@@ -114,13 +114,13 @@ foreach($results as $result)
         <div class="left-sidebar-hover"></div>
         
         <!-- Javascripts -->
-        <script src="assets/plugins/jquery/jquery-2.2.0.min.js"></script>
-        <script src="assets/plugins/materialize/js/materialize.min.js"></script>
-        <script src="assets/plugins/material-preloader/js/materialPreloader.min.js"></script>
-        <script src="assets/plugins/jquery-blockui/jquery.blockui.js"></script>
-        <script src="assets/plugins/datatables/js/jquery.dataTables.min.js"></script>
-        <script src="assets/js/alpha.min.js"></script>
-        <script src="assets/js/pages/table-data.js"></script>
+        <script src="../assets/plugins/jquery/jquery-2.2.0.min.js"></script>
+        <script src="../assets/plugins/materialize/js/materialize.min.js"></script>
+        <script src="../assets/plugins/material-preloader/js/materialPreloader.min.js"></script>
+        <script src="../assets/plugins/jquery-blockui/jquery.blockui.js"></script>
+        <script src="../assets/plugins/datatables/js/jquery.dataTables.min.js"></script>
+        <script src="../assets/js/alpha.min.js"></script>
+        <script src="../assets/js/pages/table-data.js"></script>
         
     </body>
 </html>
