@@ -93,8 +93,8 @@ $cnt=1;
 if($query->rowCount() > 0)
 {
 foreach($results as $result)
-{         
-      ?>  
+{
+      ?>
 
                                         <tr>
                                             <td> <b><?php echo htmlentities($cnt);?></b></td>

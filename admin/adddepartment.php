@@ -116,7 +116,7 @@ $error="Something went wrong. Please try again";
 
                                         </div>
                                        
-                                    </form>
+                                   </form>
                                 </div>
                             </div>
                         </div>

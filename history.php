@@ -8,6 +8,24 @@ header('location:index.php');
 }
 else{
 
+// Sending in history table
+
+/*$today = date("Y-m-d");
+$this_year = date("Y");
+$sql="SELECT cur_year FROM tblleaves LIMIT 1";
+$query = $dbh -> prepare($sql);
+$query->bindParam(':date',$today,PDO::PARAM_STR);
+$query->execute();
+$results=$query->fetchAll(PDO::FETCH_OBJ);
+if ($this_year==(int)$result[0]['cur_year']) {
+    $sql="INSERT INTO leave_history SELECT * FROM tblleaves IF ToDate <= :date";
+    $query = $dbh -> prepare($sql);
+    $query->bindParam(':date',$today,PDO::PARAM_STR);
+    $query->execute();
+}*/
+
+//$results=$query->fetchAll(PDO::FETCH_OBJ);
+//print_r ($results);
 
 
  ?>
@@ -16,7 +34,7 @@ else{
     <head>
         
         <!-- Title -->
-        <title>Employees on Leave </title>
+        <title>Leave History</title>
         
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
         <meta charset="UTF-8">
@@ -44,7 +62,7 @@ else{
             <main class="mn-inner">
                 <div class="row">
                     <div class="col s12">
-                        <div class="page-title">List of Employees who are on leave on <?php echo htmlentities(date('m/d/Y h:i:s a'))?></div>
+                        <div class="page-title">Leave History upto year <?php echo htmlentities(date('Y'))?></div>
                     </div>
                    
                     <div class="col s12 m12 l12">
@@ -56,54 +74,47 @@ else{
                                     <thead>
                                         <tr>
                                             <th width="50">#</th>
-                                            <th width="200">Employe Name</th>
-                                            <th width="150">Employe ID</th>
-                                            <th width="150">Department</th>
+                                            <th width="150">Employee ID</th>
                                             <th width="200">Leave Type</th>
                                             <th width="150">From Date</th>                 
                                             <th width="150">To Date</th>                 
-                                            <th width="300">Description</th>                 
-                                            
+                                            <th width="300">Status</th>                 
+                                            <th width="300">Admin Remarks</th>
                                         </tr>
                                     </thead>
                                  
                                     <tbody>
 <?php
-$today = (string)date("Y-m-d");
-$status=1;
-$sql = "SELECT tblleaves.id,tblleaves.Description,tblemployees.Department as dept,tblemployees.FirstName,tblemployees.LastName,tblemployees.EmpId,tblemployees.id,tblleaves.LeaveType,tblleaves.FromDate,tblleaves.ToDate,tblleaves.Status from tblleaves join tblemployees on tblleaves.empid=tblemployees.id where tblleaves.Status=1 AND tblleaves.FromDate<=:date AND tblleaves.ToDate>=:date order by dept desc";
+
+$sql="SELECT * FROM leave_history ";
+
 $query = $dbh -> prepare($sql);
+
 $query->bindParam(':date',$today,PDO::PARAM_STR);
+
 $query->execute();
+
 $results=$query->fetchAll(PDO::FETCH_OBJ);
 $cnt=1;
 if($query->rowCount() > 0)
 {
 foreach($results as $result)
 {         
+    $stat="Approved";
+    if($result->Status==0)
+        $stat="Pending";
+    if($result->Status==1)
+        $stat="Not Approved";
       ?>  
 
                                         <tr>
                                             <td> <b><?php echo htmlentities($cnt);?></b></td>
-                                            <td><a href="editemployee.php?empid=<?php echo htmlentities($result->id);?>" target="_blank"><?php echo htmlentities($result->FirstName." ".$result->LastName);?></a></td>
-                                            <td><?php echo htmlentities($result->EmpId);?></td>
-                                            <td><?php echo htmlentities($result->Department);?></td>
+                                            <td><?php echo htmlentities($result->empid);?></a></td>
                                             <td><?php echo htmlentities($result->LeaveType);?></td>
                                             <td><?php echo htmlentities($result->FromDate);?></td>
                                             <td><?php echo htmlentities($result->ToDate);?></td>
-                                            <td><button id="myBtn" style="background:#cddeef; width: 70px;" onclick="openmodal(<?php echo $cnt; ?>)" >View</button>
-                                                <div id="myModal<?php echo $cnt; ?>" class="modal">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <span class="close" onclick="closemodal(<?php echo $cnt; ?>)">&times;</span>
-                                                            <h2>Description of Holiday</h2>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <p><?php echo htmlentities($result->Description);?></p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
+                                            <td><?php echo htmlentities($stat);?></td>
+                                            <td><?php echo htmlentities($result->AdminRemark);?></td>
                                         </tr>
                                          <?php $cnt++;} }?>
                                     </tbody>

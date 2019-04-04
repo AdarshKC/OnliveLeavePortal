@@ -49,10 +49,6 @@ session_start();
                 color: white;
             }
             
-            .start{
-                padding-top: 20px; 
-            }
-            
             .start h1{
                 font-size: 50px;
             }
@@ -69,8 +65,10 @@ session_start();
             <button class="button button2" onclick="window.location.href='Bhead/index.php'">Faculty Adviser</button><br>
             <button class="button button2" onclick="window.location.href='student/index.php'">Student</button><br>
 
-            <br><h3>To check employees who currently on leave</h3>
+            <br><h3>To check employees who currently on leave:</h3>
             <button class="button button2" onclick="<?php if(strlen($_SESSION['alogin'])==0){ echo "alert('Please Login')"; }else{ echo "window.location.href='emponleave.php'"; } ?>">Click Here</button>
+            <br><h3>To check Leave History:</h3>
+            <button class="button button2" onclick="<?php if(strlen($_SESSION['alogin'])==0){ echo "alert('Please Login')"; }else{ echo "window.location.href='history.php'"; } ?>">Click Here</button>
             
         </div>
         
