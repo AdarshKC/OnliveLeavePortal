@@ -1,15 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.5
--- https://www.phpmyadmin.net/
+-- version 4.5.4.1deb2ubuntu2.1
+-- http://www.phpmyadmin.net
 --
--- Host: 127.0.0.1
--- Generation Time: Apr 02, 2019 at 04:39 AM
--- Server version: 10.1.38-MariaDB
--- PHP Version: 7.3.2
+-- Host: localhost
+-- Generation Time: Apr 05, 2019 at 06:07 PM
+-- Server version: 5.7.25-0ubuntu0.16.04.2
+-- PHP Version: 7.0.33-0ubuntu0.16.04.3
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
-START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -19,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `elms`
+-- Database: `leaveportal`
 --
 
 -- --------------------------------------------------------
@@ -40,7 +38,7 @@ CREATE TABLE `admin` (
 --
 
 INSERT INTO `admin` (`id`, `UserName`, `Password`, `updationDate`) VALUES
-(1, 'admin', '5c428d8875d2948607f3e3fe134d71b4', '2017-10-30 11:42:58'),
+(1, 'admin', '97d9de758e20f8e5a74c21ba389fb562', '2019-04-02 12:38:32'),
 (2, 'root', '6e5d1637ad859321848d7962ac7de7df', '2019-02-14 14:09:10');
 
 -- --------------------------------------------------------
@@ -67,7 +65,7 @@ CREATE TABLE `leave_history` (
   `id` int(11) NOT NULL,
   `LeaveType` varchar(110) NOT NULL,
   `count` int(11) NOT NULL,
-  `year` year(4) NOT NULL,
+  `cur_year` year(4) NOT NULL,
   `ToDate` varchar(120) NOT NULL,
   `FromDate` varchar(120) NOT NULL,
   `Description` mediumtext NOT NULL,
@@ -79,6 +77,20 @@ CREATE TABLE `leave_history` (
   `empid` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Dumping data for table `leave_history`
+--
+
+INSERT INTO `leave_history` (`id`, `LeaveType`, `count`, `cur_year`, `ToDate`, `FromDate`, `Description`, `PostingDate`, `AdminRemark`, `AdminRemarkDate`, `Status`, `IsRead`, `empid`) VALUES
+(1, 'Casual Leave', 0, 2017, '30/11/2017', '29/10/2017', 'test description test descriptiontest descriptiontest descriptiontest descriptiontest descriptiontest descriptiontest description', '2017-11-19 13:11:21', 'Lorem Ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.\r\n', '2017-12-02 23:26:27 ', 2, 1, 1),
+(2, 'Restricted Holiday(RH)', 0, 2017, '25/12/2017', '25/12/2017', 'Lorem Ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.', '2017-12-03 08:29:07', 'Lorem Ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.', '2017-12-03 14:06:12 ', 1, 1, 1),
+(3, 'Casual Leave', 0, 2019, '22/02/2019', '25/02/2019', 'Testing', '2019-02-14 14:05:07', 'abcde', '2019-02-15 16:42:30 ', 1, 1, 1),
+(4, 'Casual Leave', 0, 2019, '12/03/2019', '23/03/2019', 'testting 213', '2019-02-15 11:15:55', '1not approved', '2019-02-15 16:46:35 ', 2, 1, 1),
+(5, 'Earned Leave', 0, 2019, '2019-02-23', '2019-02-26', 'test', '2019-02-22 09:59:42', NULL, NULL, 0, 0, 1),
+(6, 'Casual Leave', 0, 2019, '2019-02-23', '2019-02-28', 'blah blah', '2019-02-22 10:05:30', 'okay man', '2019-02-22 15:36:11 ', 1, 1, 1),
+(7, 'Casual Leave', 60, 2019, '2009-01-22', '2009-03-22', 'aaj mil jayga qa? plzZZz', '2019-04-02 12:29:26', NULL, NULL, 0, 1, 2),
+(8, 'Casual Leave', 60, 2019, '2019-01-22', '2019-10-22', 'see', '2019-04-02 12:29:26', NULL, NULL, 1, 1, 2);
+
 -- --------------------------------------------------------
 
 --
@@ -88,13 +100,25 @@ CREATE TABLE `leave_history` (
 CREATE TABLE `leave_left` (
   `id` int(11) NOT NULL,
   `emp_id` int(11) NOT NULL,
-  `leave_type` varchar(30) NOT NULL,
   `leave_id` int(11) NOT NULL,
-  `taken` int(11) NOT NULL,
-  `left_days` int(11) NOT NULL,
-  `unique_id` int(60) NOT NULL,
+  `LeaveType` varchar(200) NOT NULL,
+  `leaves_taken` int(11) NOT NULL DEFAULT '0',
+  `left_days` int(11) NOT NULL DEFAULT '0',
+  `unique_id` varchar(150) NOT NULL,
+  `accumulates` int(11) NOT NULL,
+  `distributed` int(11) NOT NULL,
+  `totl_avl_year` int(11) NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `leave_left`
+--
+
+INSERT INTO `leave_left` (`id`, `emp_id`, `leave_id`, `LeaveType`, `leaves_taken`, `left_days`, `unique_id`, `accumulates`, `distributed`, `totl_avl_year`, `timestamp`) VALUES
+(1, 1, 1, 'given', 40, 10, '1_1', 1, 1, 50, '2019-04-05 09:10:23'),
+(268, 1, 2, 'System', 25, 15, '1_2', 1, 1, 40, '2019-04-05 09:10:31'),
+(269, 2, 2, 'System', 48, 2, '2_2', 0, 1, 50, '2019-04-05 09:10:37');
 
 -- --------------------------------------------------------
 
@@ -162,7 +186,7 @@ CREATE TABLE `tblemployees` (
 --
 
 INSERT INTO `tblemployees` (`id`, `EmpId`, `FirstName`, `LastName`, `EmailId`, `Password`, `Gender`, `Dob`, `Department`, `Address`, `City`, `Country`, `Phonenumber`, `Status`, `RegDate`) VALUES
-(1, 'EMP10806121', 'Johnny', 'doe', 'root', '6e5d1637ad859321848d7962ac7de7df', 'Male', '3 February, 1990', 'Human Resource', 'N NEPO', 'NEPO', 'IRE', '9857555555', 1, '2017-11-10 11:29:59'),
+(1, 'EMP10806121', 'Johnny', 'doe', 'root', '97d9de758e20f8e5a74c21ba389fb562', 'Male', '3 February, 1990', 'Human Resource', 'N NEPO', 'NEPO', 'IRE', '9857555555', 1, '2017-11-10 11:29:59'),
 (2, 'DEMP2132', 'James', 'doe', 'james@gmail.com', 'f925916e2754e5e03f75dd58a5733251', 'Male', '3 February, 1990', 'Information Technology', 'N NEPO', 'NEPO', 'IRE', '8587944255', 1, '2017-11-10 13:40:02');
 
 -- --------------------------------------------------------
@@ -192,12 +216,14 @@ CREATE TABLE `tblleaves` (
 --
 
 INSERT INTO `tblleaves` (`id`, `LeaveType`, `count`, `cur_year`, `ToDate`, `FromDate`, `Description`, `PostingDate`, `AdminRemark`, `AdminRemarkDate`, `Status`, `IsRead`, `empid`) VALUES
-(7, 'Casual Leave', 0, 2017, '30/11/2017', '29/10/2017', 'test description test descriptiontest descriptiontest descriptiontest descriptiontest descriptiontest descriptiontest description', '2017-11-19 13:11:21', 'Lorem Ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.\r\n', '2017-12-02 23:26:27 ', 2, 1, 1),
-(10, 'Restricted Holiday(RH)', 0, 2017, '25/12/2017', '25/12/2017', 'Lorem Ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.', '2017-12-03 08:29:07', 'Lorem Ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.', '2017-12-03 14:06:12 ', 1, 1, 1),
-(12, 'Casual Leave', 0, 2019, '22/02/2019', '25/02/2019', 'Testing', '2019-02-14 14:05:07', 'abcde', '2019-02-15 16:42:30 ', 1, 1, 1),
-(13, 'Casual Leave', 0, 2019, '12/03/2019', '23/03/2019', 'testting 213', '2019-02-15 11:15:55', '1not approved', '2019-02-15 16:46:35 ', 2, 1, 1),
-(14, 'Earned Leave', 0, 2019, '2019-02-23', '2019-02-26', 'test', '2019-02-22 09:59:42', NULL, NULL, 0, 0, 1),
-(15, 'Casual Leave', 0, 2019, '2019-02-23', '2019-02-28', 'blah blah', '2019-02-22 10:05:30', 'okay man', '2019-02-22 15:36:11 ', 1, 1, 1);
+(1, 'Casual Leave', 0, 2017, '30/11/2017', '29/10/2017', 'test description test descriptiontest descriptiontest descriptiontest descriptiontest descriptiontest descriptiontest description', '2017-11-19 13:11:21', 'Lorem Ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.\r\n', '2017-12-02 23:26:27 ', 2, 1, 1),
+(2, 'Restricted Holiday(RH)', 0, 2017, '25/12/2017', '25/12/2017', 'Lorem Ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.', '2017-12-03 08:29:07', 'Lorem Ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.', '2017-12-03 14:06:12 ', 1, 1, 1),
+(3, 'Casual Leave', 0, 2019, '22/02/2019', '25/02/2019', 'Testing', '2019-02-14 14:05:07', 'abcde', '2019-02-15 16:42:30 ', 1, 1, 1),
+(4, 'Casual Leave', 0, 2019, '12/03/2019', '23/03/2019', 'testting 213', '2019-02-15 11:15:55', '1not approved', '2019-02-15 16:46:35 ', 2, 1, 1),
+(5, 'Earned Leave', 0, 2019, '2019-02-23', '2019-02-26', 'test', '2019-02-22 09:59:42', NULL, NULL, 0, 0, 1),
+(6, 'Casual Leave', 0, 2019, '2019-02-23', '2019-02-28', 'blah blah', '2019-02-22 10:05:30', 'okay man', '2019-02-22 15:36:11 ', 1, 1, 1),
+(7, 'Casual Leave', 60, 2019, '2009-01-22', '2009-03-22', 'aaj mil jayga qa? plzZZz', '2019-04-02 12:29:26', NULL, NULL, 0, 1, 2),
+(8, 'Casual Leave', 60, 2019, '2019-01-22', '2019-10-22', 'see', '2019-04-02 12:29:26', NULL, NULL, 1, 1, 2);
 
 --
 -- Triggers `tblleaves`
@@ -217,8 +243,9 @@ CREATE TABLE `tblleavetype` (
   `id` int(11) NOT NULL,
   `LeaveType` varchar(200) DEFAULT NULL,
   `totl_avl_year` int(11) DEFAULT '0',
-  `DIstributed` int(11) NOT NULL DEFAULT '0',
+  `dIstributed` int(11) NOT NULL DEFAULT '0',
   `accumulates` int(11) NOT NULL DEFAULT '0',
+  `include_weekends` int(11) NOT NULL,
   `Restriction` varchar(100) DEFAULT NULL,
   `Description` mediumtext,
   `CreationDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -228,11 +255,14 @@ CREATE TABLE `tblleavetype` (
 -- Dumping data for table `tblleavetype`
 --
 
-INSERT INTO `tblleavetype` (`id`, `LeaveType`, `totl_avl_year`, `DIstributed`, `accumulates`, `Restriction`, `Description`, `CreationDate`) VALUES
-(1, 'Casual Leave', 8, 0, 0, NULL, 'Casual Leave ', '2017-11-01 12:07:56'),
-(3, 'Restricted Holiday(RH)', 0, 0, 0, NULL, 'Restricted Holiday(RH)', '2017-11-06 13:16:38'),
-(4, 'Special Leave', 3, 0, 0, 'Have you completed more than 6 years of continuous service?', '', '2017-11-06 13:16:38'),
-(5, 'Earned Leave', 30, 1, 1, '', '', '2017-11-06 13:16:38');
+INSERT INTO `tblleavetype` (`id`, `LeaveType`, `totl_avl_year`, `dIstributed`, `accumulates`, `include_weekends`, `Restriction`, `Description`, `CreationDate`) VALUES
+(1, 'Casual Leave', 8, 0, 0, 0, NULL, 'Casual Leave ', '2017-11-01 12:07:56'),
+(3, 'Restricted Holiday(RH)', 0, 0, 0, 0, NULL, 'Restricted Holiday(RH)', '2017-11-06 13:16:38'),
+(4, 'Special Leave', 3, 0, 1, 0, 'Have you completed more than 6 years of continuous service?', '', '2017-11-06 13:16:38'),
+(5, 'Earned Leave', 30, 1, 1, 0, '', '', '2017-11-06 13:16:38'),
+(6, 'casula test', 63, 2, 0, 1, NULL, 'fst', '2019-04-02 13:27:25'),
+(7, 'tset 2', 50, 4, 1, 0, NULL, 'quaterly(25)', '2019-04-02 13:34:02'),
+(8, 'final', 30, 4, 0, 1, 'riswat?', 'u know well', '2019-04-02 13:35:21');
 
 --
 -- Indexes for dumped tables
@@ -297,50 +327,41 @@ ALTER TABLE `tblleavetype`
 --
 ALTER TABLE `admin`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
 --
 -- AUTO_INCREMENT for table `leave_comb`
 --
 ALTER TABLE `leave_comb`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
 --
 -- AUTO_INCREMENT for table `leave_left`
 --
 ALTER TABLE `leave_left`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=270;
 --
 -- AUTO_INCREMENT for table `list_holidays`
 --
 ALTER TABLE `list_holidays`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
 --
 -- AUTO_INCREMENT for table `tbldepartments`
 --
 ALTER TABLE `tbldepartments`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
 --
 -- AUTO_INCREMENT for table `tblemployees`
 --
 ALTER TABLE `tblemployees`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
 --
 -- AUTO_INCREMENT for table `tblleaves`
 --
 ALTER TABLE `tblleaves`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
-
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 --
 -- AUTO_INCREMENT for table `tblleavetype`
 --
 ALTER TABLE `tblleavetype`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-COMMIT;
-
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

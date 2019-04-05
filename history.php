@@ -10,14 +10,13 @@ else{
 
 // Sending in history table
 
-/*$today = date("Y-m-d");
-$this_year = date("Y");
-$sql="SELECT cur_year FROM tblleaves LIMIT 1";
+$year = date("Y");
+$sql="INSERT INTO leave_history SELECT * FROM tblleaves WHERE cur_year<=:year";
 $query = $dbh -> prepare($sql);
-$query->bindParam(':date',$today,PDO::PARAM_STR);
+$query->bindParam(':year',$year,PDO::PARAM_STR);
 $query->execute();
-$results=$query->fetchAll(PDO::FETCH_OBJ);
-if ($this_year==(int)$result[0]['cur_year']) {
+
+/*if ($this_year==(int)$result[0]['cur_year']) {
     $sql="INSERT INTO leave_history SELECT * FROM tblleaves IF ToDate <= :date";
     $query = $dbh -> prepare($sql);
     $query->bindParam(':date',$today,PDO::PARAM_STR);
@@ -27,8 +26,7 @@ if ($this_year==(int)$result[0]['cur_year']) {
 //$results=$query->fetchAll(PDO::FETCH_OBJ);
 //print_r ($results);
 
-
- ?>
+?>
 <!DOCTYPE html>
 <html lang="en">
     <head>

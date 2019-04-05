@@ -22,11 +22,16 @@ $query->bindParam(':left_days',$left_days,PDO::PARAM_INT);
 
 foreach ($left as $i) {
     $i->leaves_taken=0;
-    $i->left_days+=$i->totl_avl_year;
+    if($i->accumulates == 1) {
+    	//echo $i."gg<br>";
+    	$i->left_days+=$i->totl_avl_year;
+	}
+	else {
+		$i->left_days=$i->totl_avl_year;
+	}
 	$id = $i->id;
 	$left_days = $i->left_days;
 	$leaves_taken = $i->leaves_taken;
 	$query->execute();
 }
-
 ?>

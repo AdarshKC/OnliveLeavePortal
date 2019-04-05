@@ -30,8 +30,8 @@ foreach($leave as $i) {
 		$accumulates = $i->accumulates;
 		$totl_avl_year = $i->totl_avl_year;
 		$distributed = $i->distributed;
-		//echo $emp_id." ".$leave_id." ".$unique_id." ".$accumulates."<br><br>";
 		
+		//echo $emp_id." ".$leave_id." ".$unique_id." ".$accumulates."<br><br>";
 		// Calculating leaves_taken for current session...
 		$leaves_taken = 0;
 		$sql3="SELECT * FROM tblleaves WHERE LeaveType=:l AND empid=:e AND Status=1";
@@ -64,6 +64,8 @@ foreach($leave as $i) {
 		$query->bindParam(':totl_avl_year',$totl_avl_year, PDO::PARAM_INT);
 		$query->bindParam(':distributed',$distributed, PDO::PARAM_INT);
 		$query->execute();
+
+		//print_r($query->fetchAll(PDO::FETCH_OBJ));
 		
 		echo $emp_id." ".$leave_id." ".$unique_id." ".$accumulates." ".$leaves_taken." ".$left_days." ".$LeaveType." ".$totl_avl_year." ".$distributed."<br>";
 	}
