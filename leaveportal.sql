@@ -1,13 +1,15 @@
 -- phpMyAdmin SQL Dump
--- version 4.5.4.1deb2ubuntu2.1
--- http://www.phpmyadmin.net
+-- version 4.8.5
+-- https://www.phpmyadmin.net/
 --
--- Host: localhost
--- Generation Time: Apr 05, 2019 at 06:07 PM
--- Server version: 5.7.25-0ubuntu0.16.04.2
--- PHP Version: 7.0.33-0ubuntu0.16.04.3
+-- Host: 127.0.0.1
+-- Generation Time: Apr 14, 2019 at 01:41 PM
+-- Server version: 10.1.38-MariaDB
+-- PHP Version: 7.3.2
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -19,9 +21,7 @@ SET time_zone = "+00:00";
 --
 -- Database: `leaveportal`
 --
-
 CREATE Database `leaveportal`;
-
 -- --------------------------------------------------------
 
 --
@@ -110,6 +110,7 @@ CREATE TABLE `leave_left` (
   `accumulates` int(11) NOT NULL,
   `distributed` int(11) NOT NULL,
   `totl_avl_year` int(11) NOT NULL,
+  `include_weekends` int(11) NOT NULL DEFAULT '0',
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -117,10 +118,10 @@ CREATE TABLE `leave_left` (
 -- Dumping data for table `leave_left`
 --
 
-INSERT INTO `leave_left` (`id`, `emp_id`, `leave_id`, `LeaveType`, `leaves_taken`, `left_days`, `unique_id`, `accumulates`, `distributed`, `totl_avl_year`, `timestamp`) VALUES
-(1, 1, 1, 'given', 40, 10, '1_1', 1, 1, 50, '2019-04-05 09:10:23'),
-(268, 1, 2, 'System', 25, 15, '1_2', 1, 1, 40, '2019-04-05 09:10:31'),
-(269, 2, 2, 'System', 48, 2, '2_2', 0, 1, 50, '2019-04-05 09:10:37');
+INSERT INTO `leave_left` (`id`, `emp_id`, `leave_id`, `LeaveType`, `leaves_taken`, `left_days`, `unique_id`, `accumulates`, `distributed`, `totl_avl_year`, `include_weekends`, `timestamp`) VALUES
+(1, 1, 1, 'given', 0, 80, '1_1', 1, 1, 50, 0, '2019-04-12 09:20:22'),
+(268, 1, 2, 'System', 0, 65, '1_2', 1, 1, 40, 0, '2019-04-12 09:20:22'),
+(269, 2, 2, 'System', 0, 50, '2_2', 0, 1, 50, 0, '2019-04-12 09:20:22');
 
 -- --------------------------------------------------------
 
@@ -135,6 +136,15 @@ CREATE TABLE `list_holidays` (
   `to_date` date NOT NULL,
   `creation_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `list_holidays`
+--
+
+INSERT INTO `list_holidays` (`id`, `name`, `from_date`, `to_date`, `creation_time`) VALUES
+(1, 'Republic Day', '2019-01-26', '2019-01-26', '2019-04-13 07:57:34'),
+(2, 'Independence Day', '2019-08-15', '2019-08-15', '2019-04-13 08:00:36'),
+(3, 'Gandhi Jayanti', '2019-10-02', '2019-10-02', '2019-04-13 08:12:46');
 
 -- --------------------------------------------------------
 
@@ -188,7 +198,7 @@ CREATE TABLE `tblemployees` (
 --
 
 INSERT INTO `tblemployees` (`id`, `EmpId`, `FirstName`, `LastName`, `EmailId`, `Password`, `Gender`, `Dob`, `Department`, `Address`, `City`, `Country`, `Phonenumber`, `Status`, `RegDate`) VALUES
-(1, 'EMP10806121', 'Johnny', 'doe', 'root', '97d9de758e20f8e5a74c21ba389fb562', 'Male', '3 February, 1990', 'Human Resource', 'N NEPO', 'NEPO', 'IRE', '9857555555', 1, '2017-11-10 11:29:59'),
+(1, 'EMP10806121', 'Johnny', 'doe', 'root', '6e5d1637ad859321848d7962ac7de7df', 'Male', '3 February, 1990', 'Human Resource', 'N NEPO', 'NEPO', 'IRE', '9857555555', 1, '2017-11-10 11:29:59'),
 (2, 'DEMP2132', 'James', 'doe', 'james@gmail.com', 'f925916e2754e5e03f75dd58a5733251', 'Male', '3 February, 1990', 'Information Technology', 'N NEPO', 'NEPO', 'IRE', '8587944255', 1, '2017-11-10 13:40:02');
 
 -- --------------------------------------------------------
@@ -318,7 +328,8 @@ ALTER TABLE `tblleaves`
 -- Indexes for table `tblleavetype`
 --
 ALTER TABLE `tblleavetype`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `LeaveType` (`LeaveType`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -329,41 +340,50 @@ ALTER TABLE `tblleavetype`
 --
 ALTER TABLE `admin`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
 --
 -- AUTO_INCREMENT for table `leave_comb`
 --
 ALTER TABLE `leave_comb`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT for table `leave_left`
 --
 ALTER TABLE `leave_left`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=270;
+
 --
 -- AUTO_INCREMENT for table `list_holidays`
 --
 ALTER TABLE `list_holidays`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
 --
 -- AUTO_INCREMENT for table `tbldepartments`
 --
 ALTER TABLE `tbldepartments`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
 --
 -- AUTO_INCREMENT for table `tblemployees`
 --
 ALTER TABLE `tblemployees`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
 --
 -- AUTO_INCREMENT for table `tblleaves`
 --
 ALTER TABLE `tblleaves`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
 --
 -- AUTO_INCREMENT for table `tblleavetype`
 --
 ALTER TABLE `tblleavetype`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+COMMIT;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

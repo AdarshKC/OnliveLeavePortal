@@ -49,7 +49,7 @@
                             </a>
                         </section>
                         <div class="header-title col s3">      
-                            <span class="chapter-title">IIT PATNA</span>
+                            <span class="chapter-title" style="white-space: nowrap;">IIT PATNA</span>
                         </div>
                      
                 
