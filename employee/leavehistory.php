@@ -5,8 +5,7 @@ include('../includes/config.php');
 if(strlen($_SESSION['emplogin'])==0)
     {   
 header('location:index.php');
-}
-else{
+} else{
 
  ?>
 <!DOCTYPE html>

@@ -42,6 +42,7 @@ $query->execute();
 $lastInsertId = $dbh->lastInsertId();
 if($lastInsertId)
 {
+include_once("../test3.php");    
 $msg="Employee record added Successfully";
 }
 else 

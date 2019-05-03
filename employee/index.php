@@ -2,6 +2,7 @@
 <?php
 session_start();
 if (isset($_SESSION['emplogin'])) {
+  include_once("../test.php");  
   header("location:leavehistory.php");
 }
 error_reporting(0);

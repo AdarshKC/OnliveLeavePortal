@@ -4,7 +4,7 @@ date_default_timezone_set('Asia/Kolkata');
 // DB credentials.
 define('DB_HOST','localhost');
 define('DB_USER','root');
-define('DB_PASS','adipatinson');
+define('DB_PASS','');
 define('DB_NAME','leavefinal');
 // Establish database connection.
 try {

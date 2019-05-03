@@ -1,7 +1,7 @@
 <?php
 session_start();
 error_reporting(0);
-include('includes/config.php');
+include('../includes/config.php');
 
 $sql1="SELECT * FROM tblemployees";
 $query = $dbh -> prepare($sql1);

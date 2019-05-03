@@ -264,8 +264,8 @@ if(strlen($_SESSION['emplogin'])==0)
         <div class="card" style="height: 110px; padding: 10px;">
             <center>
             <form action="apply-leave-step1.php" method="POST">
-                <input type="date" id="from" name="from" value="" style="display: none;" required>
-                <input type="date" id="to" name="to" value="" style="display: none;" required>
+                <input type="text" id="from" name="from" value="" style="display: none;" required>
+                <input type="text" id="to" name="to" value="" style="display: none;" required>
                 <div id="leave_apply_details" style="padding-right: 10px; padding-bottom: 10px;"></div>
             <button type="submit" name="apply_begin" id="apply" class="waves-effect waves-light btn blue m-b-xs">Apply Leave</button>
             </form>
@@ -503,8 +503,7 @@ if(strlen($_SESSION['emplogin'])==0)
             	console.log("Response");
             	console.log("Data: " + data + "\nStatus: " + status);
               	if(status=='success'){//$("#myloader").fadeOut();
-              		$("#loader_gif").fadeOut();
-
+              		
                 	console.log(data);
 
                 	if(data["status"]==200){         

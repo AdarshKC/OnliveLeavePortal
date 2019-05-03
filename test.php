@@ -1,5 +1,5 @@
 <?php
-require_once "includes/config.php";
+require_once "../includes/config.php";
 $sql2="SELECT * FROM leave_left ";
 
 echo "Sample Test Case: (Accumulation Part)<br><br>";

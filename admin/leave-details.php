@@ -45,6 +45,45 @@ $query = $dbh->prepare($sql);
 // $query->bindParam(':admremarkdate',$admremarkdate,PDO::PARAM_STR);
 // $query->bindParam(':did',$did,PDO::PARAM_STR);
 $query->execute();
+if($status==1){
+    $sql = "SELECT empid, LeaveType, count FROM tblleaves WHERE id=".$did;
+    $query = $dbh->prepare($sql);
+    $query->execute();
+    $results=$query->fetchAll(PDO::FETCH_OBJ);
+    if($query->rowCount() > 0)
+    {
+        $ltype = "";
+        $eid = 0;           
+        $count = 0; 
+        foreach($results as $result)
+        {
+            $ltype = $result->LeaveType;
+            $eid = $result->empid; 
+            $count = $result->count;           
+        }
+
+        $sql = "SELECT left_days,leaves_taken FROM leave_left WHERE emp_id=".$eid." AND LeaveType='".$ltype."'";
+        $query = $dbh->prepare($sql);
+        $query->execute();
+        $results=$query->fetchAll(PDO::FETCH_OBJ);
+        if($query->rowCount() > 0)
+        {
+            $ldays = 0;
+            $ltaken = 0;
+            foreach($results as $result)
+            {
+                $ldays = $result->left_days;
+                $ltaken = $result->leaves_taken;            
+            }
+
+            $ldays-= $count;
+            $ltaken+=$count;
+            $sql="update leave_left set left_days=".$ldays.",leaves_taken=".$ltaken." where emp_id=".$eid." AND LeaveType='".$ltype."'";
+            $query = $dbh->prepare($sql);
+            $query->execute();
+        }
+    }
+}
 $msg="Leave updated Successfully";
 }
 

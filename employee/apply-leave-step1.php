@@ -6,7 +6,41 @@ include_once('../util/leave.php');
 if(strlen($_SESSION['emplogin'])==0)
 {   
     header('location:index.php');
-} elseif (isset($_POST['apply_begin'])) {
+} elseif(isset($_POST['apply']) || isset($_POST['apply_begin'])) {
+    if(isset($_POST['apply'])) {
+        $empid=$_SESSION['eid'];
+        $description=$_POST['description'];
+        $leavetype=$_POST['leavetype'];
+        $fromdate=$_POST['fromdate'];  
+        $todate=$_POST['todate'];
+        $count=(int)$_POST['count'];
+        $status=0;
+        $isread=0;
+        
+        if($fromdate > $todate){
+            $error=" To Date should be greater than From Date ";
+        }
+        $sql="INSERT INTO tblleaves(LeaveType,count,cur_year,FromDate,ToDate,Description,Status,IsRead,empid) VALUES(:leavetype,:count,YEAR(NOW()),:fromdate,:todate,:description,:status,:isread,:empid)";
+        $query = $dbh->prepare($sql);
+        $query->bindParam(':leavetype',$leavetype,PDO::PARAM_STR);
+        $query->bindParam(':count',$count,PDO::PARAM_INT);
+        $query->bindParam(':fromdate',$fromdate,PDO::PARAM_STR);
+        $query->bindParam(':todate',$todate,PDO::PARAM_STR);
+        $query->bindParam(':description',$description,PDO::PARAM_STR);
+        $query->bindParam(':status',$status,PDO::PARAM_STR);
+        $query->bindParam(':isread',$isread,PDO::PARAM_STR);
+        $query->bindParam(':empid',$empid,PDO::PARAM_STR);
+        $query->execute();
+        $lastInsertId = $dbh->lastInsertId();
+        if($lastInsertId)
+        {
+            $msg="Leave applied successfully";
+        }
+        else 
+        {
+            $error="Something went wrong. Please try again";
+        }
+    }
     ?>
     <!DOCTYPE html>
     <html lang="en">
@@ -241,7 +275,6 @@ if(strlen($_SESSION['emplogin'])==0)
     <div class="col s12 m12 l8">
     <div class="card">
     <div class="card-content">
-        
         <form id="example-form" method="post" name="addemp">
         <div>
         <h3>Apply for Leave</h3>
@@ -258,10 +291,10 @@ if(strlen($_SESSION['emplogin'])==0)
         
         
         <div class="input-field col  s12">
-        <select name="leavetype" id="leavetype" onchange="type_changed()" autocomplete="off" >
+        <select name="leavetype" id="leavetype" onchange="type_changed()" autocomplete="off" placeholder="">
         <option value="">Select leave type...</option>
         <?php 
-        $sql = "SELECT  LeaveType from tblleavetype";
+        $sql = "SELECT  LeaveType from leave_left WHERE emp_id=".$_SESSION['eid'];
         $query = $dbh -> prepare($sql);
         $query->execute();
         $results=$query->fetchAll(PDO::FETCH_OBJ);
@@ -283,15 +316,10 @@ if(strlen($_SESSION['emplogin'])==0)
         <div id="show_leave_details">
         
         </div>    
+        <input placeholder="" name="fromdate" type="date" value="<?php echo $_POST['from']; ?>" style="display: none;" required>
+        <input placeholder="" name="count" id="count" type="number" value="" style="display: none;" required>
+        <input placeholder="" name="todate" type="date" value="<?php echo $_POST['to']; ?>" style="display: none;" required>
         <div class="input-field col m12 s12">
-        <!-- <div for="fromdate">From Date</div>
-        <input placeholder="" name="fromdate" type="date" min="<?php //echo date('Y-m-d'); ?>" onchange="change_toDate()" required>
-        </div>
-        <div class="input-field col m6 s12">
-        <div for="todate">To Date</div>
-        <input placeholder="." name="todate" type="date" min="<?php //echo date('Y-m-d'); ?>" onchange="change_fromDate()" required>
-        </div>
-         --><div class="input-field col m12 s12">
         <label for="birthdate">Description</label>
         
         <textarea id="textarea1" name="description"
@@ -299,8 +327,8 @@ if(strlen($_SESSION['emplogin'])==0)
         required></textarea>
         </div>
         </div>
-        <button type="submit" name="next" id="apply"
-        class="waves-effect waves-light btn indigo m-b-xs">Next</button>
+        <button type="submit" name="apply" id="apply"
+        class="waves-effect waves-light btn indigo m-b-xs">Apply</button>
         <a href="calendar.php" name="back" id="back"
         class="waves-effect waves-light btn indigo m-b-xs">Back</a>
         
@@ -333,14 +361,17 @@ if(strlen($_SESSION['emplogin'])==0)
             $pos = strrpos($link, "/");
             $link = substr($link, 0, $pos);
         ?>
-
+        var count_leaves = 0;
+        var from_ = "<?php echo $_POST['from']; ?>";
+        var to_ = "<?php echo $_POST['to']; ?>";
     function type_changed() {
-        console.log("clicked");
+        console.log($("#leavetype").val());
             $.post("//<?php echo $link; ?>/get_leave_det.php",
             {
-              from: <?php echo $_POST['from']; ?>,
-              to: <?php echo $_POST['to']; ?>,
-              type: $("#leavetype").val()
+              from: from_,
+              to: to_,
+              type: $("#leavetype").val(),
+              eid: <?php echo $_SESSION['eid']; ?>
             },
             function(data, status){
                 console.log("Response");
@@ -350,6 +381,8 @@ if(strlen($_SESSION['emplogin'])==0)
                     if(data["status"]==200) {    
                         console.log("done");     
                         $("#apply").fadeIn();
+                        count_leaves = data['result']['count'];
+                        $("#count").val(count_leaves);
                         document.getElementById("show_leave_details").innerHTML = "<h5><strong>"+
                                                                                 $("#leavetype").val()+"</strong></h5>"+
                                                                                 "<h5>Leaves left now: "+
@@ -358,6 +391,11 @@ if(strlen($_SESSION['emplogin'])==0)
                                                                                 data['result']['count']+"</h5>";
                     } else if(data['status']==402) {
                         document.getElementById("show_leave_details").innerHTML = "<h5>Sorry! Your specified leave length eceeds the limits of consecutive of this leave type </h5>";
+                        $("#apply").fadeOut();
+                    } else if(data['status']==403) {
+                        document.getElementById("show_leave_details").innerHTML = "<h5>Sorry! You dont have enough leave days left in this leave type </h5>";
+                        $("#apply").fadeOut();
+                    } else if(data['status']==405) {
                         $("#apply").fadeOut();
                     } else {
                         $("#apply").fadeOut();
