@@ -28,5 +28,4 @@ foreach ($empl as $i) {
 
 	echo $d1-$d2;
 }
-
 ?>

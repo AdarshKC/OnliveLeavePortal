@@ -10,7 +10,7 @@ else{
 
 // code for update the read notification status
 $isread=1;
-$did=intval($_GET['leaveid']);  
+$did=intval($_GET['leaveid']);
 date_default_timezone_set('Asia/Kolkata');
 $admremarkdate=date('Y-m-d G:i:s ', strtotime("now"));
 $sql="update tblleaves set IsRead=:isread where id=:did";
@@ -20,8 +20,11 @@ $query->bindParam(':did',$did,PDO::PARAM_STR);
 $query->execute();
 
 // code for action taken on leave
+
+//echo $_POST['update1'];
+
 if(isset($_POST['update1']) || isset($_POST['update2']))
-{ 
+{
 $did=intval($_GET['leaveid']);
 $description=$_POST['description'];
 if ($description==null || $description=="") {
@@ -31,20 +34,19 @@ if (isset($_POST['update1'])) {
   $status=1;
 } else {
   $status=2;
-}   
+}  
+
 date_default_timezone_set('Asia/Kolkata');
 $admremarkdate=date('Y-m-d G:i:s ', strtotime("now"));
-$sql="update tblleaves set AdminRemark=:description,Status=:status,AdminRemarkDate=:admremarkdate where id=:did";
+$sql="update tblleaves set AdminRemark='".$description."',Status=".$status.",AdminRemarkDate='".$admremarkdate."' where id=".$did;
 $query = $dbh->prepare($sql);
-$query->bindParam(':description',$description,PDO::PARAM_STR);
-$query->bindParam(':status',$status,PDO::PARAM_STR);
-$query->bindParam(':admremarkdate',$admremarkdate,PDO::PARAM_STR);
-$query->bindParam(':did',$did,PDO::PARAM_STR);
+// $query->bindParam(':description',$description,PDO::PARAM_STR);
+// $query->bindParam(':status',$status,PDO::PARAM_STR);
+// $query->bindParam(':admremarkdate',$admremarkdate,PDO::PARAM_STR);
+// $query->bindParam(':did',$did,PDO::PARAM_STR);
 $query->execute();
 $msg="Leave updated Successfully";
 }
-
-
 
  ?>
 <!DOCTYPE html>
@@ -200,14 +202,14 @@ if($stats==0)
 ?>
 <tr>
  <td colspan="5">
-<form name="adminaction" method="post">
+<form name="adminaction" method="POST">
   <p><textarea id="textarea1" name="description" class="materialize-textarea" name="description" placeholder="Remark if any" length="500" maxlength="500"></textarea></p>
   </td>
 </tr>
 <tr>
   <td colspan="5">
-  <input type="submit" class="waves-effect waves-light btn" name="update1" value="APPROVED">
-  <input type="submit" class="waves-effect waves-light btn" name="update2" value="NOT&nbsp;APPROVED"><br>
+  <button type="submit" class="waves-effect waves-light btn" name="update1" value="APPROVED">APPROVED</button>
+  <button type="submit" class="waves-effect waves-light btn" name="update2" value="NOT&nbsp;APPROVED">NOT&nbsp;APPROVED</button><br>
 </form>
 <!-- <div id="modal1" class="modal modal-fixed-footer" style="height: 60%">
     <div class="modal-content" style="width:90%">

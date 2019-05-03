@@ -11,7 +11,7 @@ else{
 // Sending in history table
 
 $year = date("Y");
-$sql="INSERT INTO leave_history SELECT * FROM tblleaves WHERE cur_year<=:year";
+$sql="INSERT INTO leave_history SELECT * FROM tblleaves WHERE cur_year<:year";
 $query = $dbh -> prepare($sql);
 $query->bindParam(':year',$year,PDO::PARAM_STR);
 $query->execute();
@@ -160,7 +160,6 @@ foreach($results as $result)
             }
         </script>
 
-        
     </body>
 </html>
 <?php } ?>

@@ -8,9 +8,8 @@ header('location:index.php');
 }
 else{
 
+?>
 
-
- ?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -69,6 +68,7 @@ else{
                                  
                                     <tbody>
 <?php
+
 $today = (string)date("Y-m-d");
 $status=1;
 $sql = "SELECT tblleaves.id,tblleaves.Description,tblemployees.Department as dept,tblemployees.FirstName,tblemployees.LastName,tblemployees.EmpId,tblemployees.id,tblleaves.LeaveType,tblleaves.FromDate,tblleaves.ToDate,tblleaves.Status from tblleaves join tblemployees on tblleaves.empid=tblemployees.id where tblleaves.Status=1 AND tblleaves.FromDate<=:date AND tblleaves.ToDate>=:date order by dept desc";
@@ -77,10 +77,12 @@ $query->bindParam(':date',$today,PDO::PARAM_STR);
 $query->execute();
 $results=$query->fetchAll(PDO::FETCH_OBJ);
 $cnt=1;
+// echo $query->rowCount();
 if($query->rowCount() > 0)
 {
 foreach($results as $result)
-{         
+{
+
       ?>  
 
                                         <tr>
@@ -96,7 +98,7 @@ foreach($results as $result)
                                                     <div class="modal-content">
                                                         <div class="modal-header">
                                                             <span class="close" onclick="closemodal(<?php echo $cnt; ?>)">&times;</span>
-                                                            <h2>Description of Holiday</h2>
+                                                            <h2 style="font-size: 4vw;">Description of Holiday</h2>
                                                         </div>
                                                         <div class="modal-body">
                                                             <p><?php echo htmlentities($result->Description);?></p>
