@@ -10,6 +10,7 @@ if(strlen($_SESSION['alogin'])==0)
     if(isset($_POST['add'])) {
 
     $leavetype=$_POST['leavetype'];
+    $cons=$_POST['cons'];
     $total=$_POST['total'];
     if ((int)$total>=365) {
         $error = "Number of Leaves exceeded 365!!";
@@ -35,7 +36,7 @@ if(strlen($_SESSION['alogin'])==0)
             $include_weekends=1;
         }
 
-        $sql="INSERT INTO tblleavetype(LeaveType,Description,Restriction,totl_avl_year,accumulates,distributed,include_weekends) VALUES(:leavetype,:description,:restriction,:total,:accumulates,:distributed,:include_weekends)";
+        $sql="INSERT INTO tblleavetype(LeaveType,Description,Restriction,totl_avl_year,accumulates,distributed,include_weekends,total_consec) VALUES(:leavetype,:description,:restriction,:total,:accumulates,:distributed,:include_weekends,:cons)";
         $query = $dbh->prepare($sql);
         $query->bindParam(':leavetype',$leavetype,PDO::PARAM_STR);
         $query->bindParam(':description',$description,PDO::PARAM_STR);
@@ -43,6 +44,7 @@ if(strlen($_SESSION['alogin'])==0)
         $query->bindParam(':total',$total,PDO::PARAM_STR);
         $query->bindParam(':accumulates',$accumulates,PDO::PARAM_INT);
         $query->bindParam(':distributed',$distributed,PDO::PARAM_INT);
+        $query->bindParam(':cons',$cons,PDO::PARAM_INT);
         $query->bindParam(':include_weekends',$include_weekends,PDO::PARAM_INT);
         $duplicate = 0;
         if(!$query->execute()) { 
@@ -139,6 +141,12 @@ if(strlen($_SESSION['alogin'])==0)
 <input id="total" type="text"  class="validate" autocomplete="off" name="total"  required>
                                                 <label for="leavetype">Number of leaves per year(in days)</label>
                                             </div>
+
+                                        <div class="input-field col s12">
+<input id="cons" type="text"  class="validate" autocomplete="off" name="cons"  required>
+                                                <label for="cons">Maximum number of leaves can be taken consecutevely(in days)</label>
+                                            </div>
+
                                         <div class="input-field col s12">
                                             <select id="distributed" name="distributed" required>
                                                 <option value="Quarterly">Quarterly</option>
