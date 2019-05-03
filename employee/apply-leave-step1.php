@@ -6,7 +6,7 @@ include_once('../util/leave.php');
 if(strlen($_SESSION['emplogin'])==0)
 {   
     header('location:index.php');
-} else {
+} elseif (isset($_POST['apply_begin'])) {
     ?>
     <!DOCTYPE html>
     <html lang="en">
@@ -138,7 +138,7 @@ if(strlen($_SESSION['emplogin'])==0)
                         <td><?php echo $i; ?></td>
                         <td><?php echo $result->name; ?></td>
                         <td><?php echo $result->from_date; ?></td>
-                        <td><?php echo date('l',$result->from_date); ?></td>
+                        <td><?php echo date('l',strtotime($result->from_date)); ?></td>
                     </tr>
                 <?php
                 }
@@ -241,72 +241,6 @@ if(strlen($_SESSION['emplogin'])==0)
     <div class="col s12 m12 l8">
     <div class="card">
     <div class="card-content">
-    
-    <?php
-    if(isset($_POST['next']))
-    {
-        $empid=$_SESSION['eid'];
-        $description=$_POST['description'];
-        $leavetype=$_POST['leavetype'];
-        // $sql="SELECT * FROM leave_left WHERE LeaveType=:leavetype AND emp_id=:empid";
-        // $query = $dbh->prepare($sql);
-        // $query->bindParam(':leavetype',$leavetype,PDO::PARAM_STR);
-        // $query->bindParam(':empid',$empid,PDO::PARAM_INT);
-        // $query->execute();
-        // $results=$query->fetchAll(PDO::FETCH_OBJ);
-        // if($query->rowCount() > 0) {
-        //     foreach($results as $result) {
-        //         $leaves_taken = $result->$leaves_taken;
-        //         $left_days = $result->$left_days;
-        //         $distributed = $result->distributed; 
-        //         $include_weekends = $result->include_weekends;       
-        //     }
-        // }
-        
-        $fromdate=$_POST['fromdate'];  
-        $todate=$_POST['todate'];
-        $from=date("Y-m-d", $fromdate);
-        $to=date("Y-m-d", $todate);
-        $include_weekends = 0;
-        $calc_days = new Leave($fromdate, $todate);
-        $leave_days = $calc_days->calcToalLeaveDays($include_weekends);
-        $count=(int)$leave_days['days'];
-        $left_days = 7;
-        ?>
-        
-        <form id="example-form" method="post" name="addemp">
-        <div>
-        <h3>Apply for Leave</h3>
-        <section>
-        <div class="wizard-content">
-        <div class="row">
-        <div class="col m12">
-        <div class="row">
-        <?php if($error)
-        {?><div class="errorWrap"><strong>ERROR
-            </strong>:<?php echo htmlentities($error); ?> </div><?php
-        } 
-        else if($msg){?><div class="succWrap"><strong>SUCCESS</strong>:<?php echo htmlentities($msg); ?> </div><?php }?>
-        
-        <div>
-            <h4><?php echo $leavetype; ?></h4>
-            <h5>Leaves left now: <?php echo $left_days; ?></h5>
-            <h5>Leaves going to be used: <?php echo $count; ?></h5>
-            <input type="checkbox" name="combine" value="Do you want to comnine other leave?">
-        </div>
-        <button type="submit" name="apply" id="apply"
-        class="waves-effect waves-light btn indigo m-b-xs">Submit</button>
-        
-        </div>
-        </div>
-        </section>
-        </section>
-        </div>
-        </form>
-        
-        <?php
-    } else {
-        ?>
         
         <form id="example-form" method="post" name="addemp">
         <div>
@@ -324,9 +258,10 @@ if(strlen($_SESSION['emplogin'])==0)
         
         
         <div class="input-field col  s12">
-        <select name="leavetype" autocomplete="off">
+        <select name="leavetype" id="leavetype" onchange="type_changed()" autocomplete="off" >
         <option value="">Select leave type...</option>
-        <?php $sql = "SELECT  LeaveType from tblleavetype";
+        <?php 
+        $sql = "SELECT  LeaveType from tblleavetype";
         $query = $dbh -> prepare($sql);
         $query->execute();
         $results=$query->fetchAll(PDO::FETCH_OBJ);
@@ -341,19 +276,22 @@ if(strlen($_SESSION['emplogin'])==0)
                 </option>
                 <?php 
             }
-        } ?>
+        } 
+        ?>
         </select>
         </div>
+        <div id="show_leave_details">
         
-        <div class="input-field col m6 s12">
-        <div for="fromdate">From Date</div>
-        <input placeholder="" name="fromdate" type="date" min="<?php echo date('Y-m-d'); ?>" onchange="change_toDate()" required>
+        </div>    
+        <div class="input-field col m12 s12">
+        <!-- <div for="fromdate">From Date</div>
+        <input placeholder="" name="fromdate" type="date" min="<?php //echo date('Y-m-d'); ?>" onchange="change_toDate()" required>
         </div>
         <div class="input-field col m6 s12">
         <div for="todate">To Date</div>
-        <input placeholder="." name="todate" type="date" min="<?php echo date('Y-m-d'); ?>" onchange="change_fromDate()" required>
+        <input placeholder="." name="todate" type="date" min="<?php //echo date('Y-m-d'); ?>" onchange="change_fromDate()" required>
         </div>
-        <div class="input-field col m12 s12">
+         --><div class="input-field col m12 s12">
         <label for="birthdate">Description</label>
         
         <textarea id="textarea1" name="description"
@@ -363,18 +301,15 @@ if(strlen($_SESSION['emplogin'])==0)
         </div>
         <button type="submit" name="next" id="apply"
         class="waves-effect waves-light btn indigo m-b-xs">Next</button>
+        <a href="calendar.php" name="back" id="back"
+        class="waves-effect waves-light btn indigo m-b-xs">Back</a>
         
         </div>
         </div>
         </section>
         </section>
         </div>
-        </form>
-        
-        <?php
-    }
-    ?>
-    
+        </form>    
     </div>
     </div>
     </div>
@@ -393,6 +328,51 @@ if(strlen($_SESSION['emplogin'])==0)
     <script src="../assets/js/pages/form-input-mask.js"></script>
     <script src="../assets/plugins/jquery-inputmask/jquery.inputmask.bundle.js"></script>
     <script>
+        <?php 
+            $link = $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+            $pos = strrpos($link, "/");
+            $link = substr($link, 0, $pos);
+        ?>
+
+    function type_changed() {
+        console.log("clicked");
+            $.post("//<?php echo $link; ?>/get_leave_det.php",
+            {
+              from: <?php echo $_POST['from']; ?>,
+              to: <?php echo $_POST['to']; ?>,
+              type: $("#leavetype").val()
+            },
+            function(data, status){
+                console.log("Response");
+                console.log("Data: " + data + "\nStatus: " + status);
+                if(status=='success') {//$("#myloader").fadeOut();
+                    console.log(data);
+                    if(data["status"]==200) {    
+                        console.log("done");     
+                        $("#apply").fadeIn();
+                        document.getElementById("show_leave_details").innerHTML = "<h5><strong>"+
+                                                                                $("#leavetype").val()+"</strong></h5>"+
+                                                                                "<h5>Leaves left now: "+
+                                                                                data['result']['left_days']+
+                                                                                "</h5><h5>Leaves going to be used: "+
+                                                                                data['result']['count']+"</h5>";
+                    } else if(data['status']==402) {
+                        document.getElementById("show_leave_details").innerHTML = "<h5>Sorry! Your specified leave length eceeds the limits of consecutive of this leave type </h5>";
+                        $("#apply").fadeOut();
+                    } else {
+                        $("#apply").fadeOut();
+                        console.log("err");
+                        $("#show_leave_details").html("<h5>Some Error occured! Sorry for the inconvenience.</h5>");
+                    }
+                } else {
+                    $("#apply").fadeOut();
+                    $("#show_leave_details").html("<h5>Some Error occured! Sorry for the inconvenience.</h5>");
+                    console.log("Failed "+data);
+                }
+            },"json");
+    }
+    //deepanjan took the help of Bharadwaj Nayanar 1701ME13 google please recruit him
+
     function change_toDate(){
         var from = document.forms["addemp"]["fromdate"].value;
         if(from!=""){
@@ -408,18 +388,20 @@ if(strlen($_SESSION['emplogin'])==0)
     }
     
     Date.prototype.yyyymmdd = function() {
-  var mm = this.getMonth() + 1; // getMonth() is zero-based
-  var dd = this.getDate();
+        var mm = this.getMonth() + 1; // getMonth() is zero-based
+        var dd = this.getDate();
 
-  return [this.getFullYear(),
-          (mm>9 ? '' : '0') + mm,
-          (dd>9 ? '' : '0') + dd
-         ].join('-');
-};
+        return [this.getFullYear(),
+            (mm>9 ? '' : '0') + mm,
+            (dd>9 ? '' : '0') + dd
+            ].join('-');
+        };
     </script>
     </body>
     
     </html>
     <?php 
-} 
-?>
+} else {
+    header('location:calendar.php');
+}
+    ?>
