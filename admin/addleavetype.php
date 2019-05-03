@@ -12,7 +12,7 @@ if(strlen($_SESSION['alogin'])==0)
     $leavetype=$_POST['leavetype'];
     $cons=$_POST['cons'];
     $total=$_POST['total'];
-    if ((int)$total>=365) {
+    if ((int)$total*(int)$_POST['distributed']>=365) {
         $error = "Number of Leaves exceeded 365!!";
     }
     if($error=="") {
@@ -139,7 +139,7 @@ if(strlen($_SESSION['alogin'])==0)
                                             </div>    
                                         <div class="input-field col s12">
 <input id="total" type="text"  class="validate" autocomplete="off" name="total"  required>
-                                                <label for="leavetype">Number of leaves per year(in days)</label>
+                                                <label for="leavetype">Number of leaves per session/added at a time(in days)</label>
                                             </div>
 
                                         <div class="input-field col s12">

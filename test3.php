@@ -1,7 +1,7 @@
 <?php
 session_start();
 error_reporting(0);
-include('../includes/config.php');
+include_once('../includes/config.php');
 
 $sql1="SELECT * FROM tblemployees";
 $query = $dbh -> prepare($sql1);
@@ -23,10 +23,10 @@ $leave=$query->fetchAll(PDO::FETCH_OBJ);
 $emp_id = "";
 $leave_id = "";
 		
-$sql3="SELECT * FROM tblleaves WHERE LeaveType=:l AND empid=:e AND Status=1";
-$query = $dbh -> prepare($sql3);
-$query->bindParam(':e', $emp_id, PDO::PARAM_INT);
-$query->bindParam(':l', $LeaveType, PDO::PARAM_STR);
+// $sql3="SELECT * FROM tblleaves WHERE LeaveType=:l AND empid=:e AND Status=1";
+// $query = $dbh -> prepare($sql3);
+// $query->bindParam(':e', $emp_id, PDO::PARAM_INT);
+// $query->bindParam(':l', $LeaveType, PDO::PARAM_STR);
 		
 foreach($leave as $i) {
 	foreach($empl as $j) {
@@ -43,14 +43,14 @@ foreach($leave as $i) {
 		//echo $emp_id." ".$leave_id." ".$unique_id." ".$accumulates."<br><br>";
 		// Calculating leaves_taken for current session...
 		$leaves_taken = 0;
-		$query->execute();
-		$taken=$query->fetchAll(PDO::FETCH_OBJ);
-		if($query->rowCount()) {
-			foreach ($taken as $k) {
-				//echo "is<br>";
-				$leaves_taken+=$k->count;
-			}
-		}
+		// $query->execute();
+		// $taken=$query->fetchAll(PDO::FETCH_OBJ);
+		// if($query->rowCount()) {
+		// 	foreach ($taken as $k) {
+		// 		//echo "is<br>";
+		// 		$leaves_taken+=$k->count;
+		// 	}
+		// }
 		$left_days = ($totl_avl_year)-($leaves_taken); 
 		//echo $i->totl_avl_year.$totl_avl_year."<br>";
 		//print_r ($taken);

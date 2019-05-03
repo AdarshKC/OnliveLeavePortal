@@ -1,8 +1,9 @@
 <?php
 require_once "../includes/config.php";
+
 $sql2="SELECT * FROM leave_left ";
 
-echo "Sample Test Case: (Accumulation Part)<br><br>";
+//echo "Sample Test Case: (Accumulation Part)<br><br>";
 
 $query = $dbh -> prepare($sql2);
 $query->execute();
@@ -22,7 +23,7 @@ foreach ($leave as $i) {
 	$diff = $number1-$number2;
 	
 	//echo $d1." ".$d2."<br>";
-	echo "Should be changed: ".$number1." But Changed ".$number2."<br>Difference ".$diff."<br><br>";
+	//echo "Should be changed: ".$number1." But Changed ".$number2."<br>Difference ".$diff."<br><br>";
 	
 	if($diff<=0){
 		continue;
